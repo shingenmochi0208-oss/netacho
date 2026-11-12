@@ -84,18 +84,18 @@
     </section>
   </main>
 
-  <footer class="site-footer"><span>ひきだし · v1.2</span><span>記録はこの端末のブラウザに保存されます</span></footer>
+  <footer class="site-footer"><span>ひきだし · v1.3</span><span>記録はこの端末のブラウザに保存されます</span></footer>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <dialog id="backupDialog" class="backup-dialog"><div class="modal-head"><div><p class="eyebrow">YOUR DATA</p><h2>バックアップと復元</h2></div><button id="closeBackup" type="button" class="close-dialog" aria-label="閉じる">×</button></div><p>ネタはこのブラウザ内にのみ保存されます。別の端末へ移す場合や、消去に備える場合はJSONファイルを保存してください。</p><div class="auto-backup-panel"><h3>自動バックアップ（この端末内）</h3><p id="autoBackupStatus" role="status">履歴を読み込んでいます…</p><select id="autoBackupSelect" aria-label="復元する履歴を選択" disabled><option>履歴はありません</option></select><button type="button" id="restoreAutoBackup" class="restore-button" disabled>選んだ履歴に復元</button><p>ネタを変更するたびに最大40世代を保存します。アプリのデータ削除・機種変更では履歴も失われるため、下のJSON書き出しも使ってください。</p></div><div class="cloud-panel">
 <h3>GitHubクラウド同期（試用版）</h3>
 <p><strong>shingenmochi0208-oss/netacho-data</strong>（非公開）にネタを同期します。接続後はメモの変更を自動送信し、アプリを開いたときに最新データを取得します。</p>
-<p>接続には、このリポジトリのContentsにだけ読み書きできるFine-grained tokenが必要です。トークンは保存せず、この画面の接続中だけ保持します。<strong>トークンをこのチャットへ送らないでください。</strong></p>
+<p>接続には、このリポジトリのContentsにだけ読み書きできるFine-grained tokenが必要です。チェックを入れた場合だけ、暗号化したトークンと暗号鍵をこの端末内に保存します。チェックしなければ接続中だけ使用します。<strong>トークンをこのチャットへ送らないでください。</strong></p>
 <label class="field-label" for="cloudSyncToken">GitHubのFine-grained token</label>
 <input id="cloudSyncToken" type="password" autocomplete="off" spellcheck="false" placeholder="github_pat_…" aria-describedby="cloudSyncStatus">
-<div class="cloud-buttons"><button type="button" id="cloudConnect">接続して同期</button><button type="button" id="cloudSyncNow" disabled>今すぐ同期</button><button type="button" id="cloudDisconnect">切断</button></div>
+<label class="toggle-line" style="margin:10px 0 3px;align-items:flex-start"><input type="checkbox" id="cloudRemember" aria-describedby="cloudRememberStatus"><span>この端末でログイン状態を保持する<small style="display:block;color:#737d85;font-weight:400">端末内で暗号化して保存・次回起動時に自動接続。共有端末ではオフにしてください。</small></span></label><p id="cloudRememberStatus" role="status">初回接続時にチェックすると保存できます。</p><div class="cloud-buttons"><button type="button" id="cloudConnect">接続して同期</button><button type="button" id="cloudSyncNow" disabled>今すぐ同期</button><button type="button" id="cloudDisconnect">切断</button></div>
 <p id="cloudSyncStatus" role="status">未接続。ネタは引き続き端末内へ保存されます。</p>
-<p>複数の端末で同時に編集した場合は更新日時が新しい内容を優先します。大切なメモはJSONでも控えを残してください。</p>
+<p>「切断」で保存済みの接続情報を消去できます。この暗号化は端末内の保存対策であり、不正なコードや端末の乗っ取りへの防御にはなりません。複数端末での同時編集は更新日時が新しい内容を優先します。大切なメモはJSONでも控えを残してください。</p>
 </div>
 <div class="modal-actions"><button type="button" id="exportButton" class="btn-primary">↓ JSONを書き出す</button><label class="file-upload">↑ JSONを読み込む<input id="importInput" type="file" accept="application/json,.json" hidden></label></div><p class="warning-text">読み込むと、現在のネタ帳をファイルの内容で置き換えます。必要なら先に書き出してください。</p></dialog>
 <script>
