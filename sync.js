@@ -80,7 +80,7 @@
     if(!key||!Array.isArray(entry.iv)||!Array.isArray(entry.ciphertext))throw new Error('保存済み認証情報を復元できません');
     var plain=await crypto.subtle.decrypt({name:'AES-GCM',iv:new Uint8Array(entry.iv)},key,new Uint8Array(entry.ciphertext));
     var result=new TextDecoder().decode(plain);
-    if(!/^github_pat_[\\w-]+$/.test(result))throw new Error('保存情報の形式が正しくありません');
+    if(!/^github_pat_[\w-]+$/.test(result))throw new Error('保存情報の形式が正しくありません');
     return result;
   }
   function setConnected(value) {
