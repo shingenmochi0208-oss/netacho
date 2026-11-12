@@ -41,6 +41,19 @@
 @media(min-width:670px){.item-list.compact-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:370px){.compact-row .compact-tile{grid-template-columns:55px minmax(0,1fr) 78px}.compact-row .compact-top .type-badge{font-size:9px}.mini-title{font-size:15px}.compact-tile{padding:10px 9px!important}.list-controls{gap:6px}.list-controls select{padding-left:5px}.view-switch{margin-left:0}}
 
+
+/* v1.7: review progress is distinct from subjective quality tiers */
+.review-progress{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;background:#e9e9e3;border-radius:12px;padding:7px;margin:0 0 10px}
+.review-progress>div{text-align:center;display:flex;flex-direction:column;gap:1px;padding:2px 0}
+.review-progress strong{font-size:20px;font-weight:850;color:#233745;line-height:1.25;font-variant-numeric:tabular-nums}
+.review-progress span{font-size:10px;color:#64727a;white-space:nowrap}
+.review-chip{display:inline-block;font-weight:750;font-size:10px;border-radius:6px;padding:4px 6px;white-space:nowrap;background:#eef0ed;color:#60717a}
+.review-unreviewed{background:#eff0ef;color:#5a6870}.review-in_progress{background:#fff2db;color:#8a621c}.review-refined{background:#e1eee7;color:#276b4b}.review-stale{background:#fce9e4;color:#994f43}
+.review-stale-hint{font-size:12px;color:#97493e;background:#fff4f1;padding:9px 10px;border-radius:9px}
+.compact-bottom{gap:4px}.compact-row .compact-tile{grid-template-columns:minmax(0,65px) minmax(0,1fr) 133px}
+.compact-row .compact-bottom{justify-content:flex-end;gap:5px}.compact-row .tier-picker{width:58px!important;padding:4px 5px!important}
+@media(max-width:390px){.review-chip{font-size:9px;padding:3px 4px}.tier-picker{width:67px!important;font-size:11px!important;padding-left:5px!important}.compact-row .compact-tile{grid-template-columns:43px minmax(0,1fr) 118px}.compact-row .tier-picker{width:53px!important}.review-progress span{font-size:9px}}
+
 </style>
   <title>ひきだし | ネタ帳</title>
 </head>
@@ -56,6 +69,12 @@
     
 
     <div class="stats" aria-label="ネタ帳の統計"><div><strong id="totalCount">0</strong><span>ストック</span></div><div><strong id="favoriteCount">0</strong><span>お気に入り</span></div><div><strong id="usedCount">0</strong><span>話したネタ</span></div></div>
+    <div class="review-progress" aria-label="ネタの壁打ち進捗">
+      <div><strong id="reviewUnreviewed">0</strong><span>未着手</span></div>
+      <div><strong id="reviewInProgress">0</strong><span>壁打ち中</span></div>
+      <div><strong id="reviewRefined">0</strong><span>洗練済み</span></div>
+      <div><strong id="reviewStale">0</strong><span>要再確認</span></div>
+    </div>
 
     <nav class="primary-tabs" aria-label="メインメニュー">
       <button id="tabStock" class="primary-tab active" aria-selected="true" aria-controls="stockPanel" role="tab" type="button"><span class="tab-icon">✎</span> ストックする</button>
@@ -91,10 +110,11 @@
         <div class="filter-strip" role="group" aria-label="ジャンルで絞り込み"><button class="filter active" data-list-type="all">すべて</button><button class="filter" data-list-type="話題">話題</button><button class="filter" data-list-type="小ボケ">小ボケ</button><button class="filter" data-list-type="あるある">あるある</button><button class="filter" data-list-type="その他">その他</button><button class="filter" data-list-type="favorite">★ お気に入り</button></div>
         <div class="list-controls">
           <label>ティア <select id="tierFilter" aria-label="ティアで絞り込む"><option value="all">すべて</option><option value="S">S</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="-">未評価</option></select></label>
+          <label>壁打ち <select id="reviewFilter" aria-label="壁打ちの進捗で絞り込む"><option value="all">すべて</option><option value="unreviewed">未着手</option><option value="in_progress">壁打ち中</option><option value="refined">洗練済み</option><option value="stale">要再確認</option><option value="needs_work">未完了</option></select></label>
           <label>並び <select id="sortMode" aria-label="ネタの並び順"><option value="new">新しい順</option><option value="tier">ティア順</option></select></label>
           <div class="view-switch" aria-label="一覧表示切り替え"><button type="button" class="on" id="gridMode" aria-pressed="true">タイル</button><button type="button" id="rowMode" aria-pressed="false">行</button></div>
         </div>
-        <p class="list-hint">題名タップで詳細 · ティアはその場で変更</p>
+        <p class="list-hint">題名タップで詳細と進捗の変更 · ティアはその場で変更</p>
         <div id="itemList" class="item-list compact-grid" aria-live="polite"></div>
       </div>
     </section>
@@ -113,7 +133,7 @@
     </section>
   </main>
 
-  <footer class="site-footer"><span>ひきだし · v1.6</span><span>記録はこの端末のブラウザに保存されます</span></footer>
+  <footer class="site-footer"><span>ひきだし · v1.7</span><span>記録はこの端末のブラウザに保存されます</span></footer>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <dialog id="noteDialog" class="note-dialog" aria-labelledby="noteDialogTitle">
@@ -144,6 +164,8 @@
   const TYPES = ['話題','小ボケ','あるある','その他'];
   const SCENES = ['いつでも','初対面','友人','飲み会','深い話'];
   const TIERS = ['S','A','B','C'];
+  const REVIEW_STATES = ['unreviewed','in_progress','refined'];
+  const REVIEW_LABELS = {unreviewed:'未着手',in_progress:'壁打ち中',refined:'洗練済み',stale:'要再確認'};
   const $ = (id) => document.getElementById(id);
   const escapeHtml = (s) => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const trimMax = (s, max) => String(s ?? '').trim().slice(0,max);
@@ -153,6 +175,7 @@
   let currentType = '話題';
   let listType = 'all';
   let tierFilter = 'all';
+  let reviewFilter = 'all';
   let listSort = 'new';
   let viewMode = 'grid';
   let detailId = null;
@@ -166,12 +189,38 @@
   let backupQueue = Promise.resolve();
   let backupHistory = [];
 
+  function sanitizeReview(raw) {
+    const review=raw && typeof raw==='object' ? raw : {};
+    const status=REVIEW_STATES.includes(review.status)?review.status:'unreviewed';
+    return {
+      status,
+      reviewedAt:Number.isFinite(Date.parse(review.reviewedAt))?review.reviewedAt:null,
+      startedAt:Number.isFinite(Date.parse(review.startedAt))?review.startedAt:null,
+      source:review.source==='chatgpt'?'chatgpt':review.source==='manual'?'manual':null,
+      summary:trimMax(review.summary,600)
+    };
+  }
+  function reviewStage(item) {
+    const status=item.review?.status||'unreviewed';
+    if(status==='refined'){
+      const at=Date.parse(item.review?.reviewedAt||'');
+      const content=Date.parse(item.contentUpdatedAt||item.updatedAt||'');
+      if(!Number.isFinite(at)||Number.isFinite(content)&&content>at)return 'stale';
+    }
+    return REVIEW_STATES.includes(status)?status:'unreviewed';
+  }
+  function reviewOptions(stage){
+    return ['unreviewed','in_progress','refined',...(stage==='stale'?['stale']:[])].map(value=>
+      `<option value="${value}"${stage===value?' selected':''}${value==='stale'?' disabled':''}>${REVIEW_LABELS[value]}</option>`).join('');
+  }
   function sanitize(raw) {
     if (!raw || typeof raw !== 'object' || !raw.body || typeof raw.body !== 'string') return null;
     const body=trimMax(raw.body,5000); if (!body) return null;
     return {
       id:trimMax(raw.id || makeId(),120), body, type:TYPES.includes(raw.type)?raw.type:'話題',
       scene:SCENES.includes(raw.scene)?raw.scene:'いつでも',tier:TIERS.includes(raw.tier)?raw.tier:'',
+      review:sanitizeReview(raw.review),
+      contentUpdatedAt:Number.isFinite(Date.parse(raw.contentUpdatedAt))?raw.contentUpdatedAt:(Number.isFinite(Date.parse(raw.updatedAt))?raw.updatedAt:new Date().toISOString()),
       opening:trimMax(raw.opening,300),notes:trimMax(raw.notes,3000),
       tags:Array.isArray(raw.tags)?[...new Set(raw.tags.map(x=>trimMax(x,30)).filter(Boolean))].slice(0,15):[],
       favorite:raw.favorite===true, usageCount:Math.max(0,Math.min(99999,Number(raw.usageCount)||0)),
@@ -281,6 +330,12 @@
     $('totalCount').textContent=items.length;
     $('favoriteCount').textContent=items.filter(i=>i.favorite).length;
     $('usedCount').textContent=items.filter(i=>i.usageCount>0).length;
+    const counts={unreviewed:0,in_progress:0,refined:0,stale:0};
+    items.forEach(i=>counts[reviewStage(i)]++);
+    $('reviewUnreviewed').textContent=counts.unreviewed;
+    $('reviewInProgress').textContent=counts.in_progress;
+    $('reviewRefined').textContent=counts.refined;
+    $('reviewStale').textContent=counts.stale;
   }
   function setTab(which) {
     const stock=which==='stock';$('stockPanel').hidden=!stock;$('recallPanel').hidden=stock;
@@ -300,8 +355,10 @@
     const data={...old,id:old?.id||makeId(),body,type:currentType,scene:$('sceneInput').value,
       opening:trimMax($('openingInput').value,300),notes:trimMax($('notesInput').value,3000),
       tags:[...new Set($('tagsInput').value.split(/[,、，\n]+/g).map(x=>trimMax(x,30)).filter(Boolean))].slice(0,15),
-      tier:old?.tier||'',favorite:old?.favorite||false,usageCount:old?.usageCount||0,reactions:old?.reactions||{great:0,normal:0,miss:0},
+      tier:old?.tier||'',review:old?.review||sanitizeReview(null),contentUpdatedAt:old?.contentUpdatedAt||now,
+      favorite:old?.favorite||false,usageCount:old?.usageCount||0,reactions:old?.reactions||{great:0,normal:0,miss:0},
       createdAt:old?.createdAt||now,updatedAt:now,lastUsedAt:old?.lastUsedAt||null};
+    if(!old || old.body!==data.body || old.notes!==data.notes || old.opening!==data.opening) data.contentUpdatedAt=now;
     if(old)items=items.map(i=>i.id===old.id?data:i);else items.unshift(data);
     persist(old?'編集':'追加');resetForm();refresh();showToast(old?'ネタを更新しました':'ネタをストックしました');
   }
@@ -327,10 +384,30 @@
     if(detailId===id && $('noteDialog').open)renderDetail();
     showToast(value?`ティアを${value}に設定しました`:'未評価に戻しました');
   }
+  function setReviewStatus(id,status){
+    if(!REVIEW_STATES.includes(status))return;
+    const item=items.find(x=>x.id===id);
+    if(!item || (reviewStage(item)===status))return;
+    const now=new Date().toISOString();
+    const previous=item.review||sanitizeReview(null);
+    item.review={
+      status,
+      startedAt:status==='in_progress'?previous.startedAt||now:previous.startedAt,
+      reviewedAt:status==='refined'?now:null,
+      source:status==='refined'?'manual':null,
+      summary:status==='refined'?previous.summary:''
+    };
+    item.updatedAt=now;
+    if(!persist('壁打ち進捗'))return;
+    refresh();
+    if(detailId===id&&$('noteDialog').open)renderDetail();
+    showToast('壁打ち：'+REVIEW_LABELS[status]);
+  }
   function renderList() {
     const q=$('searchInput').value.trim().toLocaleLowerCase('ja-JP');
     let shown=items.filter(i=>(listType==='all'||(listType==='favorite'?i.favorite:i.type===listType))&&
       (tierFilter==='all'||(tierFilter==='-'?!i.tier:i.tier===tierFilter))&&
+      (reviewFilter==='all'||(reviewFilter==='needs_work'?reviewStage(i)!=='refined':reviewStage(i)===reviewFilter))&&
       (!q||[i.body,i.opening,i.notes,i.scene,...i.tags].join(' ').toLocaleLowerCase('ja-JP').includes(q)));
     const rank=(i)=>i.tier?TIERS.indexOf(i.tier):99;
     shown.sort((a,b)=>listSort==='tier'?(rank(a)-rank(b)||Date.parse(b.createdAt)-Date.parse(a.createdAt)):Date.parse(b.createdAt)-Date.parse(a.createdAt));
@@ -345,7 +422,7 @@
       <div class="compact-top"><span class="type-badge type-${escapeHtml(i.type)}">${escapeHtml(i.type)}</span>
       <button type="button" class="favorite-button ${i.favorite?'on':''}" data-action="favorite" aria-label="${i.favorite?'お気に入り解除':'お気に入り追加'}" aria-pressed="${i.favorite}">${i.favorite?'★':'☆'}</button></div>
       <button type="button" class="mini-title" data-action="open" aria-label="${escapeHtml(i.body)}の詳細">${escapeHtml(i.body)}</button>
-      <div class="compact-bottom"><span class="tier-caption">TIER</span><select class="tier-picker" data-tier aria-label="${escapeHtml(i.body)}のティア">${tierOptions(i.tier)}</select></div>
+      <div class="compact-bottom"><span class="review-chip review-${reviewStage(i)}">${REVIEW_LABELS[reviewStage(i)]}</span><select class="tier-picker" data-tier aria-label="${escapeHtml(i.body)}のティア">${tierOptions(i.tier)}</select></div>
     </article>`).join('');
   }
   function renderDetail(){
@@ -357,6 +434,10 @@
       <span class="scene-badge">${escapeHtml(i.scene)}</span>
       <button type="button" class="detail-favorite" data-detail-action="favorite">${i.favorite?'★ お気に入り解除':'☆ お気に入りに追加'}</button></div>
       <div class="detail-tier"><label for="detailTier">ティア</label><select id="detailTier" aria-label="このネタのティア">${tierOptions(i.tier)}</select></div>
+      <div class="detail-tier" style="margin-top:11px"><label for="detailReview">AI壁打ち</label><select id="detailReview" aria-label="壁打ちの進捗" style="width:160px">${reviewOptions(reviewStage(i))}</select></div>
+      ${i.review?.source==='chatgpt'&&i.review?.reviewedAt?`<div class="detail-label">ChatGPTで洗練 · ${dateLabel(i.review.reviewedAt)}</div>`:''}
+      ${i.review?.summary?`<div class="detail-section"><div class="detail-label">壁打ちの成果</div><div class="detail-content">${escapeHtml(i.review.summary)}</div></div>`:''}
+      ${reviewStage(i)==='stale'?'<p class="review-stale-hint">洗練後に題名や中身が編集されました。再度壁打ちしたら「洗練済み」に更新してください。</p>':''}
       ${i.notes?`<div class="detail-section"><div class="detail-label">中身・補足・オチ</div><div class="detail-content">${escapeHtml(i.notes)}</div></div>`:''}
       ${i.opening?`<div class="detail-section"><div class="detail-label">話し出し</div><div class="detail-content">${escapeHtml(i.opening)}</div></div>`:''}
       ${i.tags?.length?`<div class="tags">${i.tags.map(t=>`<span class="tag">#${escapeHtml(t)}</span>`).join('')}</div>`:''}
@@ -411,6 +492,7 @@
   $('closeCapture').addEventListener('click',resetForm);
   $('captureCard').addEventListener('close',()=>{if(editingId!==null)resetForm();});
   $('tierFilter').addEventListener('change',e=>{tierFilter=e.target.value;renderList();});
+  $('reviewFilter').addEventListener('change',e=>{reviewFilter=e.target.value;renderList();});
   $('sortMode').addEventListener('change',e=>{listSort=e.target.value;renderList();});
   function setListView(mode){viewMode=mode;['grid','row'].forEach(m=>{const el=$(m+'Mode');const active=m===mode;el.classList.toggle('on',active);el.setAttribute('aria-pressed',String(active));});renderList();}
   $('gridMode').addEventListener('click',()=>setListView('grid'));
@@ -418,7 +500,7 @@
   $('itemList').addEventListener('change',e=>{const selector=e.target.closest('select[data-tier]');if(!selector)return;const id=selector.closest('[data-id]')?.dataset.id;if(id)setTier(id,selector.value);});
   $('closeNoteDialog').addEventListener('click',()=>$('noteDialog').close());
   $('noteDialog').addEventListener('close',()=>{detailId=null;});
-  $('noteDialogContent').addEventListener('change',e=>{if(e.target.id==='detailTier'&&detailId)setTier(detailId,e.target.value);});
+  $('noteDialogContent').addEventListener('change',e=>{if(!detailId)return;if(e.target.id==='detailTier')setTier(detailId,e.target.value);if(e.target.id==='detailReview')setReviewStatus(detailId,e.target.value);});
   $('noteDialog').addEventListener('click',e=>{
     const button=e.target.closest('button[data-detail-action]');if(!button||!detailId)return;
     const id=detailId,item=items.find(i=>i.id===id);if(!item)return;
