@@ -63,6 +63,26 @@
 .role-tags{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
 .role-chip{font-size:11px;font-weight:750;background:#edf2f4;color:#3b6476;border:1px solid #dde6ea;padding:4px 8px;border-radius:7px}
 
+
+/* v1.8.1: compact role editor from every list tile */
+.compact-top .list-role-trigger{margin-left:auto;flex:none;min-width:26px;height:27px;padding:2px 4px;border-radius:7px;border:1px solid #d8e2e5;background:#f2f6f7;color:#5b7482;font-size:11px;font-weight:800;line-height:1}
+.compact-top .list-role-trigger.has-roles{background:#e0edf2;border-color:#9cc1d0;color:#20546e}
+.compact-top .favorite-button{margin-left:0;flex:none}
+.compact-top .type-badge{flex-shrink:0}
+.compact-row .compact-tile{grid-template-columns:minmax(0,103px) minmax(0,1fr) 84px}
+.list-role-dialog{width:min(460px,calc(100% - 28px));max-height:85dvh;overflow-y:auto;margin:auto;padding:20px 20px 18px;border:1px solid #e3e2dc;border-radius:19px;color:var(--ink);background:#fff;box-shadow:0 14px 55px #0003}
+.list-role-dialog::backdrop{background:#14212c99}
+.list-role-note-title{margin:14px 0 8px;font-size:17px;font-weight:800;overflow-wrap:anywhere;white-space:pre-wrap}
+.list-role-help{color:#697880;font-size:12px;margin:0 0 18px}
+.list-role-dialog .role-picker{gap:10px}
+.list-role-dialog .role-option{min-height:43px}
+.list-role-finish{display:block;margin-top:20px;width:100%;padding:12px;border:0;border-radius:11px;background:#253744;color:#fff;font-size:14px;font-weight:800}
+@media(max-width:370px){
+.compact-row .compact-tile{grid-template-columns:62px minmax(0,1fr) 77px}
+.compact-row .compact-top .type-badge{display:none}
+.compact-row .compact-top .list-role-trigger{margin-left:0}
+}
+
 </style>
   <title>ひきだし | ネタ帳</title>
 </head>
@@ -133,7 +153,7 @@
           <label>並び <select id="sortMode" aria-label="ネタの並び順"><option value="new">新しい順</option><option value="tier">ティア順</option></select></label>
           <div class="view-switch" aria-label="一覧表示切り替え"><button type="button" class="on" id="gridMode" aria-pressed="true">タイル</button><button type="button" id="rowMode" aria-pressed="false">行</button></div>
         </div>
-        <p class="list-hint">題名タップで詳細と進捗の変更 · ティアはその場で変更</p>
+        <p class="list-hint">題名タップで詳細 · ＃で使いどころを設定 · ティアはその場で変更</p>
         <div id="itemList" class="item-list compact-grid" aria-live="polite"></div>
       </div>
     </section>
@@ -152,9 +172,16 @@
     </section>
   </main>
 
-  <footer class="site-footer"><span>ひきだし · v1.8</span><span>記録はこの端末のブラウザに保存されます</span></footer>
+  <footer class="site-footer"><span>ひきだし · v1.8.1</span><span>記録はこの端末のブラウザに保存されます</span></footer>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
+<dialog id="listRoleDialog" class="list-role-dialog" aria-labelledby="listRoleTitle">
+  <div class="modal-head"><div><p class="eyebrow">TALK USE</p><h2 id="listRoleTitle">使いどころ</h2></div><button type="button" id="closeListRole" class="close-dialog" aria-label="閉じる">×</button></div>
+  <p id="listRoleNoteTitle" class="list-role-note-title"></p>
+  <p class="list-role-help">最大3つまで選択できます。選択・解除は自動保存されます。</p>
+  <div class="role-picker" id="listRolePicker" role="group" aria-label="使いどころを選択"></div>
+  <button type="button" id="finishListRole" class="list-role-finish">完了</button>
+</dialog>
 <dialog id="noteDialog" class="note-dialog" aria-labelledby="noteDialogTitle">
   <div class="modal-head"><div><p class="eyebrow">STORED IDEA</p><h2 id="noteDialogTitle">ネタの詳細</h2></div><button type="button" id="closeNoteDialog" class="close-dialog" aria-label="閉じる">×</button></div>
   <div id="noteDialogContent"></div>
@@ -199,6 +226,7 @@
   let reviewFilter = 'all';
   let roleFilter = 'all';
   let selectedRoles = [];
+  let listRoleId = null;
   let listSort = 'new';
   let viewMode = 'grid';
   let detailId = null;
@@ -442,6 +470,35 @@
     if(detailId===id&&$('noteDialog').open)renderDetail();
     showToast('壁打ち：'+REVIEW_LABELS[status]);
   }
+  function updateListRolePicker(){
+    const item=items.find(i=>i.id===listRoleId);
+    if(!item)return;
+    $('listRoleNoteTitle').textContent=item.body;
+    $('listRolePicker').innerHTML=ROLES.map(role=>{
+      const active=(item.roles||[]).includes(role);
+      return `<button type="button" class="role-option${active?' selected':''}" data-dialog-role="${escapeHtml(role)}" aria-pressed="${active}">${escapeHtml(role)}</button>`;
+    }).join('');
+  }
+  function openListRole(id){
+    if(!items.some(i=>i.id===id))return;
+    listRoleId=id;
+    updateListRolePicker();
+    $('listRoleDialog').showModal();
+  }
+  function toggleListRole(role){
+    const item=items.find(i=>i.id===listRoleId);
+    if(!item||!ROLES.includes(role))return;
+    const before=[...(item.roles||[])];
+    const now=item.updatedAt;
+    if(before.includes(role))item.roles=before.filter(r=>r!==role);
+    else if(before.length<3)item.roles=[...before,role];
+    else {showToast('使いどころは最大3つまでです');return;}
+    item.updatedAt=new Date().toISOString();
+    if(!persist('使いどころタグ変更')){item.roles=before;item.updatedAt=now;return;}
+    updateListRolePicker();
+    renderList();
+    showToast('使いどころを保存しました');
+  }
   function renderList() {
     const q=$('searchInput').value.trim().toLocaleLowerCase('ja-JP');
     let shown=items.filter(i=>(listType==='all'||(listType==='favorite'?i.favorite:i.type===listType))&&
@@ -460,6 +517,7 @@
     }
     list.innerHTML=shown.map(i=>`<article class="item-card compact-tile" data-id="${escapeHtml(i.id)}">
       <div class="compact-top"><span class="type-badge type-${escapeHtml(i.type)}">${escapeHtml(i.type)}</span>
+      <button type="button" class="list-role-trigger ${(i.roles||[]).length?'has-roles':''}" data-action="roles" title="使いどころを設定" aria-label="${escapeHtml(i.body)}の使いどころタグを編集">＃${(i.roles||[]).length||''}</button>
       <button type="button" class="favorite-button ${i.favorite?'on':''}" data-action="favorite" aria-label="${i.favorite?'お気に入り解除':'お気に入り追加'}" aria-pressed="${i.favorite}">${i.favorite?'★':'☆'}</button></div>
       <button type="button" class="mini-title" data-action="open" aria-label="${escapeHtml(i.body)}の詳細">${escapeHtml(i.body)}</button>
       <div class="compact-bottom"><span class="review-chip review-${reviewStage(i)}">${REVIEW_LABELS[reviewStage(i)]}</span><select class="tier-picker" data-tier aria-label="${escapeHtml(i.body)}のティア">${tierOptions(i.tier)}</select></div>
@@ -540,6 +598,14 @@
   $('gridMode').addEventListener('click',()=>setListView('grid'));
   $('rowMode').addEventListener('click',()=>setListView('row'));
   $('itemList').addEventListener('change',e=>{const selector=e.target.closest('select[data-tier]');if(!selector)return;const id=selector.closest('[data-id]')?.dataset.id;if(id)setTier(id,selector.value);});
+  $('listRolePicker').addEventListener('click',e=>{
+    const b=e.target.closest('button[data-dialog-role]');
+    if(b)toggleListRole(b.dataset.dialogRole);
+  });
+  $('closeListRole').addEventListener('click',()=>$('listRoleDialog').close());
+  $('finishListRole').addEventListener('click',()=>$('listRoleDialog').close());
+  $('listRoleDialog').addEventListener('close',()=>{listRoleId=null;});
+  $('listRoleDialog').addEventListener('click',e=>{if(e.target===$('listRoleDialog'))$('listRoleDialog').close();});
   $('closeNoteDialog').addEventListener('click',()=>$('noteDialog').close());
   $('noteDialog').addEventListener('close',()=>{detailId=null;});
   $('noteDialogContent').addEventListener('change',e=>{if(!detailId)return;if(e.target.id==='detailTier')setTier(detailId,e.target.value);if(e.target.id==='detailReview')setReviewStatus(detailId,e.target.value);});
@@ -567,6 +633,7 @@
     switch(button.dataset.action){
       case 'favorite':item.favorite=!item.favorite;item.updatedAt=new Date().toISOString();persist('お気に入り');refresh();break;
       case 'open':openDetail(id);break;
+      case 'roles':openListRole(id);break;
       case 'edit':beginEdit(id);break;
       case 'delete':if(window.confirm('このネタを削除しますか？')){items=items.filter(x=>x.id!==id);if(editingId===id)resetForm();persist('削除');refresh();showToast('削除しました');}break;
       case 'draw':$('recallType').value='all';$('recallScene').value='all';$('favoritesOnly').checked=false;setTab('recall');draw(id);$('recallPanel').scrollIntoView({behavior:'smooth'});break;
