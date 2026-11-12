@@ -1,4 +1,4 @@
-/* ひきだし: opt-in GitHub synchronization. Credentials are held in memory only. */
+/* ひきだし: opt-in GitHub synchronization. Credentials can be encrypted in a device-local vault by explicit choice. */
 (function () {
   'use strict';
   var OWNER = 'shingenmochi0208-oss';
@@ -11,6 +11,83 @@
   var rerun = false;
   var connected = false;
   var bridge = window.hikidashiBridge;
+  var authEpoch = 0;
+  var VAULT_DB = 'hikidashi.github-token.v1';
+  var VAULT_STORE = 'kv';
+  function rememberStatus(message) {
+    var el = $('cloudRememberStatus');
+    if (el) el.textContent = message;
+  }
+  function openVault() {
+    return new Promise(function(resolve,reject) {
+      if (!window.indexedDB || !window.crypto || !crypto.subtle) {
+        reject(new Error('この端末ではログイン保存を利用できません')); return;
+      }
+      var req = indexedDB.open(VAULT_DB,1);
+      req.onupgradeneeded = function() {
+        var db=req.result;
+        if(!db.objectStoreNames.contains(VAULT_STORE)) db.createObjectStore(VAULT_STORE);
+      };
+      req.onsuccess = function(){resolve(req.result);};
+      req.onerror = function(){reject(req.error || new Error('保存領域を開けません'));};
+      req.onblocked = function(){reject(new Error('保存領域が使用されています'));};
+    });
+  }
+  async function vaultRead(name) {
+    var db=await openVault();
+    try {return await new Promise(function(resolve,reject){
+      var tx=db.transaction(VAULT_STORE,'readonly');
+      var req=tx.objectStore(VAULT_STORE).get(name);
+      req.onsuccess=function(){resolve(req.result);};
+      req.onerror=function(){reject(req.error||new Error('保存情報を読めません'));};
+    });}finally{db.close();}
+  }
+  async function vaultWrite(name,value) {
+    var db=await openVault();
+    try {return await new Promise(function(resolve,reject){
+      var tx=db.transaction(VAULT_STORE,'readwrite');
+      tx.objectStore(VAULT_STORE).put(value,name);
+      tx.oncomplete=function(){resolve();};
+      tx.onerror=function(){reject(tx.error||new Error('保存できません'));};
+      tx.onabort=function(){reject(tx.error||new Error('保存が中断されました'));};
+    });}finally{db.close();}
+  }
+  async function vaultForget() {
+    var db=await openVault();
+    try {return await new Promise(function(resolve,reject){
+      var tx=db.transaction(VAULT_STORE,'readwrite');
+      tx.objectStore(VAULT_STORE).delete('token');
+      tx.objectStore(VAULT_STORE).delete('key');
+      tx.oncomplete=function(){resolve();};
+      tx.onerror=function(){reject(tx.error||new Error('接続情報を削除できません'));};
+      tx.onabort=function(){reject(tx.error||new Error('削除が中断されました'));};
+    });}finally{db.close();}
+  }
+  async function vaultRemember(value) {
+    var key=await vaultRead('key');
+    if(!key) {
+      key=await crypto.subtle.generateKey({name:'AES-GCM',length:256},false,['encrypt','decrypt']);
+      await vaultWrite('key',key);
+    }
+    var iv=crypto.getRandomValues(new Uint8Array(12));
+    var ciphertext=await crypto.subtle.encrypt({name:'AES-GCM',iv:iv},key,new TextEncoder().encode(value));
+    await vaultWrite('token',{iv:Array.from(iv),ciphertext:Array.from(new Uint8Array(ciphertext))});
+  }
+  async function vaultRestore() {
+    var entry=await vaultRead('token');
+    if(!entry) return null;
+    var key=await vaultRead('key');
+    if(!key||!Array.isArray(entry.iv)||!Array.isArray(entry.ciphertext))throw new Error('保存済み認証情報を復元できません');
+    var plain=await crypto.subtle.decrypt({name:'AES-GCM',iv:new Uint8Array(entry.iv)},key,new Uint8Array(entry.ciphertext));
+    var result=new TextDecoder().decode(plain);
+    if(!/^github_pat_[\\w-]+$/.test(result))throw new Error('保存情報の形式が正しくありません');
+    return result;
+  }
+  function setConnected(value) {
+    connected=value;
+    $('cloudSyncNow').disabled=!value;
+    $('cloudConnect').textContent=value?'再接続':'接続して同期';
+  }
 
   function $(id) { return document.getElementById(id); }
   function status(message, kind) {
@@ -185,9 +262,13 @@
     timer=setTimeout(sync,2000);
     status('未同期の変更があります…', 'warn');
   }
+  async function verifyRepository() {
+    var info=await api('');
+    if(!info.private || info.full_name!==OWNER+'/'+REPO) throw new Error('専用の非公開リポジトリに接続できません');
+  }
   async function connect() {
     var input=$('cloudSyncToken');
-    var supplied=input.value.trim();
+    var supplied=input.value.trim(), epoch=++authEpoch;
     input.value='';
     if (!supplied || !/^github_pat_[\w-]+$/.test(supplied)) {
       status('Fine-grained tokenを入力してください', 'warn'); return;
@@ -196,35 +277,88 @@
     status('非公開リポジトリへの接続を確認中…');
     $('cloudConnect').disabled=true;
     try {
-      var info=await api('');
-      if (!info.private || info.full_name !== OWNER+'/'+REPO) throw new Error('接続先は専用の非公開リポジトリだけにしてください');
-      connected=true;
-      $('cloudSyncNow').disabled=false;
-      $('cloudConnect').textContent='再接続';
+      await verifyRepository();
+      if(epoch!==authEpoch)return;
+      setConnected(true);
+      if($('cloudRemember').checked){
+        try {
+          await vaultRemember(token);
+          rememberStatus('この端末に暗号化して保存しました。次回は自動接続します。');
+        }catch(error){rememberStatus('ログイン保持に失敗：'+error.message);}
+      }else{
+        try {await vaultForget();}catch(error){rememberStatus('保存済みの接続情報を消去できません：'+error.message);}
+      }
       await sync();
     } catch (error) {
-      token='';connected=false;
+      if(epoch!==authEpoch)return;
+      token='';setConnected(false);
       status('接続できません：'+error.message,'warn');
-      $('cloudSyncNow').disabled=true;
     } finally {
       $('cloudConnect').disabled=false;
     }
   }
+  async function restoreSession() {
+    var epoch=authEpoch;
+    try {
+      var saved=await vaultRestore();
+      if(!saved||authEpoch!==epoch)return;
+      token=saved;
+      $('cloudRemember').checked=true;
+      status('保存済みの接続情報で自動接続中…');
+      rememberStatus('この端末にログイン情報を保持しています');
+      if(!navigator.onLine){
+        setConnected(true);
+        status('オフライン。通信復帰後に自動同期します', 'warn');
+        return;
+      }
+      await verifyRepository();
+      if(epoch!==authEpoch)return;
+      setConnected(true);
+      await sync();
+    }catch(error){
+      if(epoch!==authEpoch)return;
+      token='';setConnected(false);
+      status('自動接続に失敗：'+error.message+'。必要に応じてトークンを再入力してください', 'warn');
+    }
+  }
   function disconnect() {
+    ++authEpoch;
     clearTimeout(timer);timer=null;
-    token='';connected=false;rerun=false;
-    $('cloudSyncNow').disabled=true;
-    $('cloudConnect').textContent='接続して同期';
+    token='';setConnected(false);rerun=false;
+    $('cloudRemember').checked=false;
     status('未接続。端末内への保存は継続します');
+    rememberStatus('この端末のログイン情報を消去しています…');
+    vaultForget().then(function(){
+      rememberStatus('保存済みのログイン情報を消去しました');
+    }).catch(function(error){
+      rememberStatus('保存情報の消去に失敗：'+error.message);
+    });
+  }
+  async function rememberToggle() {
+    if(!connected||!token)return;
+    if($('cloudRemember').checked){
+      try {
+        await vaultRemember(token);
+        rememberStatus('次回から自動接続します');
+      }catch(error){
+        $('cloudRemember').checked=false;
+        rememberStatus('ログイン保持に失敗：'+error.message);
+      }
+    }else{
+      try{await vaultForget();rememberStatus('次回はトークンの再入力が必要です');}
+      catch(error){rememberStatus('保存情報を消去できません：'+error.message);}
+    }
   }
   if (!bridge || !$('cloudConnect')) return;
   $('cloudConnect').addEventListener('click',connect);
   $('cloudSyncNow').addEventListener('click',sync);
   $('cloudDisconnect').addEventListener('click',disconnect);
+  $('cloudRemember').addEventListener('change',rememberToggle);
   window.addEventListener('online',schedule);
   document.addEventListener('visibilitychange',function(){if(!document.hidden)schedule();});
   window.addEventListener('focus',function(){if(connected)schedule();});
   window.hikidashiCloud = {
     onLocalSaved: function(reason){ if(reason !== 'クラウド同期') schedule(); }
   };
+  restoreSession();
 })();
