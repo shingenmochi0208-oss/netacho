@@ -79,8 +79,10 @@
     var key=await vaultRead('key');
     if(!key||!Array.isArray(entry.iv)||!Array.isArray(entry.ciphertext))throw new Error('保存済み認証情報を復元できません');
     var plain=await crypto.subtle.decrypt({name:'AES-GCM',iv:new Uint8Array(entry.iv)},key,new Uint8Array(entry.ciphertext));
-    var result=new TextDecoder().decode(plain);
-    if(!/^github_pat_[\w-]+$/.test(result))throw new Error('保存情報の形式が正しくありません');
+    var result=new TextDecoder().decode(plain).trim();
+    // Do not reject a successfully decrypted token based on a duplicated, fragile regex.
+    // GitHub repository verification below is the authoritative credentials check.
+    if(!result || !result.startsWith('github_pat_'))throw new Error('保存済みトークンが破損しています');
     return result;
   }
   function setConnected(value) {
@@ -318,7 +320,7 @@
     }catch(error){
       if(epoch!==authEpoch)return;
       token='';setConnected(false);
-      status('自動接続に失敗：'+error.message+'。必要に応じてトークンを再入力してください', 'warn');
+      status('自動接続に失敗：'+error.message+'。「切断」で端末の認証情報だけ消去し、トークンを再入力できます。ネタは消えません。', 'warn');
     }
   }
   function disconnect() {
@@ -350,6 +352,7 @@
     }
   }
   if (!bridge || !$('cloudConnect')) return;
+  if($('cloudVersion')) $('cloudVersion').textContent='同期プログラム v1.7.2 読み込み済み';
   $('cloudConnect').addEventListener('click',connect);
   $('cloudSyncNow').addEventListener('click',sync);
   $('cloudDisconnect').addEventListener('click',disconnect);
