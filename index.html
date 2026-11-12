@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f7f5f0">
+  <meta name="description" content="日常のトークテーマや小ボケをストックして、会話のときにすぐ引き出すネタ帳。">
+  
+  
+  
+  <style>
+[hidden]{display:none!important}
+:root{--bg:#f7f5f0;--ink:#202b36;--muted:#737d85;--line:#e1e0d9;--card:#fff;--accent:#e76f50;--soft:#f6e7df;--navy:#202f3b;--shadow:0 8px 30px rgba(34,41,48,.035)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic",sans-serif;color:var(--ink);font-size:15px;line-height:1.65}button,input,textarea,select{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid #8cb7ce;outline-offset:2px}button:disabled{opacity:.45;cursor:not-allowed}.app-shell{max-width:750px;margin:auto;padding:0 24px}.site-header{height:103px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--line)}.brand-mark{height:38px;width:38px;background:var(--navy);color:white;border-radius:12px;display:grid;place-items:center;font-size:22px;font-weight:800;transform:rotate(-5deg)}.brand-mark span{transform:rotate(5deg)}.brand{font-size:23px;font-weight:800;letter-spacing:.01em;line-height:1.1}.brand-dot{color:var(--accent)}.brand-caption{color:var(--muted);font-size:11px;letter-spacing:.07em;margin-top:3px}.icon-action{margin-left:auto;background:none;border:1px solid var(--line);border-radius:14px;width:43px;height:43px;display:grid;place-items:center}.icon-action svg,.search-bar svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.intro{padding:45px 0 21px}.eyebrow{font-size:10px;letter-spacing:.18em;font-weight:800;color:var(--accent);margin:0 0 12px}.intro h1{font-size:clamp(29px,5.1vw,43px);line-height:1.36;letter-spacing:-.045em;margin:0;font-weight:850}.intro h1 em{font-style:normal;color:var(--accent)}.lead{color:var(--muted);font-size:14px;margin:18px 0 0}.small-only{display:none}.stats{display:flex;align-items:center;padding:16px 22px;background:#edece6;border-radius:16px;margin:10px 0 28px}.stats>div{flex:1;text-align:center;border-right:1px solid #d9d9d2;display:flex;flex-direction:column;align-items:center;line-height:1.35}.stats>div:last-child{border:0}.stats strong{font-size:26px;font-weight:800;font-variant-numeric:tabular-nums}.stats span{font-size:11px;color:var(--muted);margin-top:4px}.primary-tabs{display:flex;gap:8px;border-bottom:1px solid var(--line);margin-bottom:22px}.primary-tab{background:none;border:0;border-bottom:3px solid transparent;color:var(--muted);font-weight:750;padding:14px 24px 13px;min-width:160px}.primary-tab.active{color:var(--ink);border-color:var(--accent)}.tab-icon{font-size:19px;margin-right:5px}.paper-card{background:var(--card);border:1px solid #eceae3;border-radius:20px;padding:25px 27px;box-shadow:var(--shadow)}.section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}.section-head .eyebrow{margin-bottom:6px}h2{font-size:21px;letter-spacing:-.03em;line-height:1.35;margin:0;font-weight:800}.section-mini{color:#999;font-size:11px;white-space:nowrap}.field-label{display:block;font-size:12px;font-weight:800;margin:22px 0 9px}.required,.optional{font-size:11px;font-weight:450;color:var(--muted)}.required{color:var(--accent)}textarea,input:not([type="checkbox"]),select{display:block;background:#fbfaf7;width:100%;border:1px solid #dfdfd8;color:var(--ink);padding:13px 14px;border-radius:12px;min-height:46px;outline-offset:1px}textarea{resize:vertical;line-height:1.65}::placeholder{color:#abb0b3}.field-caption{color:#999;font-size:11px;margin-top:8px}.label-gap{margin-top:23px}.label-gap .field-label{margin-top:0}.choice-row{display:flex;gap:8px;flex-wrap:wrap}.choice,.filter{border:1px solid var(--line);background:white;padding:8px 13px;border-radius:10px;color:var(--muted);font-size:13px;font-weight:650}.choice.active,.filter.active{background:var(--navy);border-color:var(--navy);color:white}.advanced-fields{border-top:1px dashed var(--line);margin-top:25px;padding-top:9px}.advanced-fields summary{list-style:none;cursor:pointer;color:#59616b;font-size:13px;font-weight:700;padding:13px 0;display:flex;justify-content:space-between}.advanced-fields summary::-webkit-details-marker{display:none}.advanced-fields summary span{font-size:22px;font-weight:400}.advanced-fields[open] summary span{transform:rotate(45deg)}.advanced-inner{padding-bottom:8px}.advanced-inner .field-label{margin-top:13px}.capture-actions{display:flex;align-items:center;gap:14px;margin-top:21px}.btn-primary{background:var(--accent);color:white;border:0;border-radius:13px;min-height:49px;padding:11px 22px;font-weight:800;box-shadow:0 3px 0 #c1543a}.btn-primary:active{transform:translateY(2px);box-shadow:0 1px 0 #c1543a}.btn-text{color:var(--muted);background:none;border:none;font-weight:650}.hidden{display:none!important}.list-section{margin-top:43px}.list-heading{margin-bottom:20px}.count-suffix{color:#a8a9aa;font-size:15px;margin-left:5px;font-weight:600}.search-bar{position:relative}.search-bar svg{position:absolute;left:15px;top:12px;color:#9ca3a6}.search-bar input{padding-left:44px;background:#fff}.filter-strip{display:flex;gap:8px;overflow:auto;scrollbar-width:none;padding:15px 0 19px}.filter-strip::-webkit-scrollbar{display:none}.filter{white-space:nowrap;border-radius:99px;padding:6px 13px}.item-list{display:grid;gap:11px}.item-card{background:#fff;border:1px solid #e9e7e2;border-radius:16px;padding:18px 19px;box-shadow:var(--shadow)}.item-top{display:flex;justify-content:space-between;align-items:center;gap:12px}.item-meta{display:flex;align-items:center;flex-wrap:wrap;gap:7px}.type-badge{background:#edf0f0;color:#4c626b;font-size:11px;font-weight:800;padding:3px 10px;border-radius:6px}.type-小ボケ{background:#fff1dc;color:#97652a}.type-あるある{background:#e9efe6;color:#53734d}.type-その他{background:#f0ebf5;color:#75577f}.scene-badge{color:#9a9a99;font-size:11px}.favorite-button{background:none;border:0;font-size:22px;color:#c4c6c7;padding:0 4px;line-height:1}.favorite-button.on{color:#f2ae44}.item-body{font-size:15px;font-weight:650;line-height:1.8;white-space:pre-wrap;overflow-wrap:anywhere;margin:14px 0 10px}.item-opening,.item-notes{font-size:12px;color:#667078;margin:8px 0;white-space:pre-wrap;overflow-wrap:anywhere}.tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:10px}.tag{font-size:11px;color:#7e8487;background:#f5f4ef;padding:3px 8px;border-radius:5px}.item-bottom{display:flex;align-items:center;justify-content:space-between;border-top:1px solid #f0efeb;margin-top:14px;padding-top:12px;gap:10px}.item-date{color:#9da2a3;font-size:10px}.item-tools{display:flex;gap:5px}.item-tools button{border:0;background:none;color:#66717b;font-size:12px;padding:6px}.item-tools .danger{color:#b87969}.empty-state{padding:43px 20px;background:#fff;border:1px dashed #dedbd4;border-radius:17px;text-align:center;color:var(--muted)}.empty-state strong{color:var(--ink);display:block;margin-bottom:6px}.empty-state .empty-icon{font-size:34px;margin-bottom:9px}.recall-setup .eyebrow{margin-bottom:6px}.recall-subtitle{color:var(--muted);font-size:13px;margin:11px 0 22px}.recall-setup .field-label{margin-top:17px}.toggle-line{display:flex;gap:10px;align-items:center;font-size:13px;font-weight:650;margin:19px 0 20px;cursor:pointer}.toggle-line input{accent-color:var(--accent);width:18px;height:18px}.recall-button{width:100%;font-size:16px}.pool-count{text-align:center;color:var(--muted);font-size:11px;margin:13px 0 0}.recall-result{padding-top:20px}.blank-recall{border:1px dashed #d6d5ce;border-radius:20px;text-align:center;padding:49px 20px;color:#8d9598;font-size:14px}.blank-symbol{font-size:42px;color:#d7aaa0}.pulled-card{background:var(--navy);color:#fff;border-radius:20px;padding:25px 25px 22px;box-shadow:0 14px 26px rgba(32,47,59,.11)}.pulled-card .type-badge{background:#405360;color:#fff}.pulled-card .scene-badge{color:#b9c6ca}.pulled-top{display:flex;align-items:center;justify-content:space-between}.pulled-index{font-size:11px;color:#aebfc6;letter-spacing:.08em}.pulled-body{font-size:clamp(19px,4.5vw,26px);font-weight:800;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere;margin:25px 0 20px}.pulled-opening{background:#394d5a;border-radius:11px;padding:12px 14px;white-space:pre-wrap;font-size:13px}.pulled-opening span{display:block;color:#a8c0cb;font-size:10px;letter-spacing:.09em;margin-bottom:3px;font-weight:800}.pulled-card details{border-top:1px solid #4a5c67;margin-top:20px;padding-top:13px;font-size:13px;color:#d6e0e3}.pulled-card details summary{cursor:pointer;color:#b8cbd2;font-weight:700}.pulled-card details div{white-space:pre-wrap;margin-top:10px;overflow-wrap:anywhere}.reaction-title{margin:23px 0 11px;font-size:12px;color:#b8cbd2;font-weight:750}.reaction-buttons{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.reaction-buttons button{border:1px solid #667783;background:transparent;color:white;border-radius:10px;padding:10px 4px;font-size:13px;font-weight:650}.reaction-buttons button:hover{background:#3d5564}.next-button{margin-top:15px;width:100%;background:#fff;color:var(--ink);border:0;border-radius:11px;padding:11px;font-weight:800}.reaction-hint{font-size:11px;color:#aabcc4;text-align:center;margin:11px 0 0}.site-footer{display:flex;justify-content:space-between;gap:15px;color:#a5a5a0;font-size:10px;border-top:1px solid var(--line);margin-top:65px;padding:24px 0 35px}.toast{position:fixed;bottom:calc(24px + env(safe-area-inset-bottom));left:50%;transform:translate(-50%,20px);padding:11px 17px;background:#253641;color:#fff;font-size:13px;border-radius:12px;box-shadow:0 5px 22px #0002;opacity:0;pointer-events:none;transition:opacity .18s,transform .18s;z-index:1000;max-width:88%;text-align:center}.toast.visible{opacity:1;transform:translate(-50%,0)}.backup-dialog{border:none;border-radius:20px;padding:25px;width:min(440px,calc(100% - 34px));color:var(--ink);box-shadow:0 15px 65px #0004}.backup-dialog::backdrop{background:#17242c9c}.backup-dialog p:not(.eyebrow){font-size:13px;color:#67717a}.modal-head{display:flex;align-items:flex-start;justify-content:space-between}.modal-head .eyebrow{margin-bottom:5px}.close-dialog{background:none;border:0;font-size:26px}.modal-actions{display:grid;gap:11px;margin-top:20px}.file-upload{display:flex;align-items:center;justify-content:center;text-align:center;background:#f5f3ef;border:1px solid #e4e0d9;border-radius:12px;padding:12px;min-height:49px;font-weight:750;cursor:pointer}.backup-dialog .warning-text{color:#a06a54!important;font-size:11px!important;margin-top:17px}
+@media(max-width:540px){.app-shell{padding:0 17px}.site-header{height:78px}.intro{padding:34px 0 19px}.intro h1{font-size:32px}.small-only{display:block}.stats{padding:14px 9px;margin-bottom:21px}.stats strong{font-size:24px}.primary-tab{min-width:0;flex:1;padding:12px 8px;font-size:13px}.paper-card{padding:20px 18px;border-radius:18px}.section-mini{font-size:10px}.capture-actions .btn-primary{flex:1}.site-footer{flex-direction:column;gap:3px}.item-card{padding:16px}.pulled-card{padding:22px 18px}.reaction-buttons button{font-size:12px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.toast{transition:none}}
+
+</style>
+  <title>ひきだし | ネタ帳</title>
+</head>
+<body>
+<div class="app-shell">
+  <header class="site-header">
+    <div class="brand-mark" aria-hidden="true"><span>ひ</span></div>
+    <div class="brand-text"><div class="brand">ひきだし<span class="brand-dot">.</span></div><div class="brand-caption">話すための、ネタ帳。</div></div>
+    <button id="backupButton" type="button" class="icon-action" aria-label="バックアップと復元" title="バックアップと復元"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0-12-4 4m4-4 4 4M4 16v4h16v-4"/></svg></button>
+  </header>
+
+  <main>
+    <section class="intro"><p class="eyebrow">YOUR CONVERSATION BANK</p><h1>思いついたら、<br><em>とりあえず入れる。</em></h1><p class="lead">日々の「これ話したい」と小ボケを、<br class="small-only">忘れる前に。</p></section>
+
+    <div class="stats" aria-label="ネタ帳の統計"><div><strong id="totalCount">0</strong><span>ストック</span></div><div><strong id="favoriteCount">0</strong><span>お気に入り</span></div><div><strong id="usedCount">0</strong><span>話したネタ</span></div></div>
+
+    <nav class="primary-tabs" aria-label="メインメニュー">
+      <button id="tabStock" class="primary-tab active" aria-selected="true" aria-controls="stockPanel" role="tab" type="button"><span class="tab-icon">✎</span> ストックする</button>
+      <button id="tabRecall" class="primary-tab" aria-selected="false" aria-controls="recallPanel" role="tab" type="button"><span class="tab-icon">↗</span> 引き出す</button>
+    </nav>
+
+    <section id="stockPanel" role="tabpanel" aria-labelledby="tabStock">
+      <div class="paper-card capture-card" id="captureCard">
+        <div class="section-head"><div><p class="eyebrow">QUICK CAPTURE</p><h2 id="formTitle">ネタを放り込む</h2></div><span class="section-mini">雑でOK。あとで直せる。</span></div>
+        <form id="captureForm">
+          <label for="bodyInput" class="field-label">何を思いついた？ <span class="required">必須</span></label>
+          <textarea id="bodyInput" name="body" placeholder="例：『教師は社会経験がない』って言うけど、学校も社会じゃない？" maxlength="5000" rows="3" required></textarea>
+          <div class="field-caption">まずは一文だけでも保存できます。</div>
+          <div class="label-gap"><label class="field-label">ジャンル</label><div class="choice-row" id="typePicker" role="group" aria-label="ジャンル">
+            <button type="button" class="choice active" data-type="話題">話題</button><button type="button" class="choice" data-type="小ボケ">小ボケ</button><button type="button" class="choice" data-type="あるある">あるある</button><button type="button" class="choice" data-type="その他">その他</button>
+          </div></div>
+          <details class="advanced-fields" id="advancedFields"><summary>話し出し・タグなどを追加 <span>＋</span></summary>
+            <div class="advanced-inner">
+              <label class="field-label" for="openingInput">話し始めの一言 <span class="optional">任意</span></label><input id="openingInput" maxlength="300" placeholder="例：これ、前から思ってたんだけど……">
+              <label class="field-label" for="sceneInput">使えそうな場面</label><select id="sceneInput"><option value="いつでも">いつでも</option><option value="初対面">初対面</option><option value="友人">友人</option><option value="飲み会">飲み会</option><option value="深い話">深い話</option></select>
+              <label class="field-label" for="tagsInput">タグ <span class="optional">カンマ区切り</span></label><input id="tagsInput" maxlength="400" placeholder="例：社会、仕事、ツッコミ">
+              <label class="field-label" for="notesInput">背景・オチ・補足 <span class="optional">任意</span></label><textarea id="notesInput" maxlength="3000" rows="2" placeholder="思いついたきっかけや、話の着地点など"></textarea>
+            </div>
+          </details>
+          <div class="capture-actions"><button class="btn-primary" type="submit" id="saveButton">＋ ストックする</button><button id="cancelEdit" type="button" class="btn-text hidden">編集をやめる</button></div>
+        </form>
+      </div>
+
+      <div class="list-section">
+        <div class="section-head list-heading"><div><p class="eyebrow">YOUR COLLECTION</p><h2>ストック一覧 <span class="count-suffix" id="listCount">0</span></h2></div></div>
+        <div class="search-bar"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.9" cy="10.9" r="6.6"/><path d="m16 16 4.5 4.5"/></svg><input id="searchInput" aria-label="ネタを検索" placeholder="キーワード・タグで検索"></div>
+        <div class="filter-strip" role="group" aria-label="ジャンルで絞り込み"><button class="filter active" data-list-type="all">すべて</button><button class="filter" data-list-type="話題">話題</button><button class="filter" data-list-type="小ボケ">小ボケ</button><button class="filter" data-list-type="あるある">あるある</button><button class="filter" data-list-type="その他">その他</button><button class="filter" data-list-type="favorite">★ お気に入り</button></div>
+        <div id="itemList" class="item-list" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section id="recallPanel" role="tabpanel" aria-labelledby="tabRecall" hidden>
+      <div class="paper-card recall-setup"><p class="eyebrow">PULL ONE OUT</p><h2>今日、何を話そう。</h2><p class="recall-subtitle">場面とジャンルを選んで、1枚引くだけ。</p>
+        <label class="field-label" for="recallScene">どんな場面？</label>
+        <select id="recallScene"><option value="all">どこでも</option><option value="初対面">初対面</option><option value="友人">友人と</option><option value="飲み会">飲み会</option><option value="深い話">じっくり話す</option></select>
+        <label class="field-label" for="recallType">ジャンル</label>
+        <select id="recallType"><option value="all">なんでも</option><option value="話題">話題</option><option value="小ボケ">小ボケ</option><option value="あるある">あるある</option><option value="その他">その他</option></select>
+        <label class="toggle-line"><input type="checkbox" id="favoritesOnly"><span>お気に入りだけ</span></label>
+        <button type="button" class="btn-primary recall-button" id="drawButton">↗ 1枚引く</button>
+        <p id="poolCount" class="pool-count"></p>
+      </div>
+      <div id="recallResult" class="recall-result" aria-live="polite"><div class="blank-recall"><div class="blank-symbol">↗</div><p>ボタンを押すと、<br>ネタを1つ引き出します。</p></div></div>
+    </section>
+  </main>
+
+  <footer class="site-footer"><span>ひきだし · v1.0</span><span>記録はこの端末のブラウザに保存されます</span></footer>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<dialog id="backupDialog" class="backup-dialog"><div class="modal-head"><div><p class="eyebrow">YOUR DATA</p><h2>バックアップと復元</h2></div><button id="closeBackup" type="button" class="close-dialog" aria-label="閉じる">×</button></div><p>ネタはこのブラウザ内にのみ保存されます。別の端末へ移す場合や、消去に備える場合はJSONファイルを保存してください。</p><div class="modal-actions"><button type="button" id="exportButton" class="btn-primary">↓ JSONを書き出す</button><label class="file-upload">↑ JSONを読み込む<input id="importInput" type="file" accept="application/json,.json" hidden></label></div><p class="warning-text">読み込むと、現在のネタ帳をファイルの内容で置き換えます。必要なら先に書き出してください。</p></dialog>
+<script>
+/* ひきだし v1 — stores data locally, never uploads anything */
+(() => {
+  'use strict';
+  const STORAGE_KEY = 'hikidashi.items.v1';
+  const TYPES = ['話題','小ボケ','あるある','その他'];
+  const SCENES = ['いつでも','初対面','友人','飲み会','深い話'];
+  const $ = (id) => document.getElementById(id);
+  const escapeHtml = (s) => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const trimMax = (s, max) => String(s ?? '').trim().slice(0,max);
+  const makeId = () => (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  const dateLabel = s => { const d=new Date(s); return Number.isNaN(+d) ? '日付不明' : new Intl.DateTimeFormat('ja-JP',{year:'numeric',month:'short',day:'numeric'}).format(d); };
+  let items = [];
+  let currentType = '話題';
+  let listType = 'all';
+  let editingId = null;
+  let drawnId = null;
+  let recentIds = [];
+  let toastTimer = null;
+  let storageWorks = true;
+
+  function sanitize(raw) {
+    if (!raw || typeof raw !== 'object' || !raw.body || typeof raw.body !== 'string') return null;
+    const body=trimMax(raw.body,5000); if (!body) return null;
+    return {
+      id:trimMax(raw.id || makeId(),120), body, type:TYPES.includes(raw.type)?raw.type:'話題',
+      scene:SCENES.includes(raw.scene)?raw.scene:'いつでも',
+      opening:trimMax(raw.opening,300),notes:trimMax(raw.notes,3000),
+      tags:Array.isArray(raw.tags)?[...new Set(raw.tags.map(x=>trimMax(x,30)).filter(Boolean))].slice(0,15):[],
+      favorite:raw.favorite===true, usageCount:Math.max(0,Math.min(99999,Number(raw.usageCount)||0)),
+      reactions:{great:Math.max(0,Math.min(99999,Number(raw.reactions?.great)||0)),normal:Math.max(0,Math.min(99999,Number(raw.reactions?.normal)||0)),miss:Math.max(0,Math.min(99999,Number(raw.reactions?.miss)||0))},
+      createdAt:Number.isFinite(Date.parse(raw.createdAt))?raw.createdAt:new Date().toISOString(),
+      updatedAt:Number.isFinite(Date.parse(raw.updatedAt))?raw.updatedAt:new Date().toISOString(),
+      lastUsedAt:Number.isFinite(Date.parse(raw.lastUsedAt))?raw.lastUsedAt:null
+    };
+  }
+  function load() {
+    try { const raw=JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]'); items=Array.isArray(raw)?raw.map(sanitize).filter(Boolean):[]; }
+    catch(e){storageWorks=false;items=[];showToast('保存済みデータを読み込めませんでした');}
+  }
+  function persist() {
+    try {localStorage.setItem(STORAGE_KEY,JSON.stringify(items));storageWorks=true;return true;}
+    catch(e){storageWorks=false;showToast('保存に失敗。バックアップをお試しください');return false;}
+  }
+  function showToast(message) {
+    const el=$('toast');el.textContent=message;el.classList.add('visible');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('visible'),2700);
+  }
+  function updateStats() {
+    $('totalCount').textContent=items.length;
+    $('favoriteCount').textContent=items.filter(i=>i.favorite).length;
+    $('usedCount').textContent=items.filter(i=>i.usageCount>0).length;
+  }
+  function setTab(which) {
+    const stock=which==='stock';$('stockPanel').hidden=!stock;$('recallPanel').hidden=stock;
+    $('tabStock').classList.toggle('active',stock);$('tabRecall').classList.toggle('active',!stock);
+    $('tabStock').setAttribute('aria-selected',String(stock));$('tabRecall').setAttribute('aria-selected',String(!stock));
+    if (!stock) updatePoolCount();
+  }
+  function chooseType(type){ currentType=type; document.querySelectorAll('#typePicker [data-type]').forEach(b=>b.classList.toggle('active',b.dataset.type===type)); }
+  function resetForm(){
+    $('captureForm').reset();chooseType('話題');editingId=null;
+    $('formTitle').textContent='ネタを放り込む';$('saveButton').textContent='＋ ストックする';$('cancelEdit').classList.add('hidden');$('advancedFields').open=false;
+  }
+  function handleSave(e) {
+    e.preventDefault();const body=trimMax($('bodyInput').value,5000);if(!body){$('bodyInput').focus();return;}
+    const now=new Date().toISOString();const old=items.find(i=>i.id===editingId);
+    const data={...old,id:old?.id||makeId(),body,type:currentType,scene:$('sceneInput').value,
+      opening:trimMax($('openingInput').value,300),notes:trimMax($('notesInput').value,3000),
+      tags:[...new Set($('tagsInput').value.split(/[,、，\n]+/g).map(x=>trimMax(x,30)).filter(Boolean))].slice(0,15),
+      favorite:old?.favorite||false,usageCount:old?.usageCount||0,reactions:old?.reactions||{great:0,normal:0,miss:0},
+      createdAt:old?.createdAt||now,updatedAt:now,lastUsedAt:old?.lastUsedAt||null};
+    if(old)items=items.map(i=>i.id===old.id?data:i);else items.unshift(data);
+    persist();resetForm();refresh();showToast(old?'ネタを更新しました':'ネタをストックしました');
+  }
+  function beginEdit(id) {
+    const i=items.find(x=>x.id===id);if(!i)return;setTab('stock');editingId=id;
+    $('bodyInput').value=i.body;$('openingInput').value=i.opening;$('sceneInput').value=i.scene;
+    $('tagsInput').value=i.tags.join('、');$('notesInput').value=i.notes;chooseType(i.type);
+    $('advancedFields').open=!!(i.opening||i.notes||i.tags.length||i.scene!=='いつでも');
+    $('formTitle').textContent='ネタを編集する';$('saveButton').textContent='変更を保存';$('cancelEdit').classList.remove('hidden');
+    $('captureCard').scrollIntoView({behavior:'smooth',block:'start'});setTimeout(()=>$('bodyInput').focus({preventScroll:true}),250);
+  }
+  function renderList() {
+    const q=$('searchInput').value.trim().toLocaleLowerCase('ja-JP');
+    let shown=items.filter(i=>(listType==='all'||(listType==='favorite'?i.favorite:i.type===listType))&&(!q||[i.body,i.opening,i.notes,i.scene,...i.tags].join(' ').toLocaleLowerCase('ja-JP').includes(q)));
+    shown.sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));$('listCount').textContent=shown.length;
+    const list=$('itemList');
+    if(!shown.length){
+      list.innerHTML=`<div class="empty-state"><div class="empty-icon">✦</div><strong>${items.length?'条件に合うネタがありません':'まだネタがありません'}</strong><span>${items.length?'検索やフィルターを変えてみてください。':'最初の一言を、上から入れてみましょう。'}</span></div>`;return;
+    }
+    list.innerHTML=shown.map(i=>`<article class="item-card" data-id="${escapeHtml(i.id)}">
+      <div class="item-top"><div class="item-meta"><span class="type-badge type-${escapeHtml(i.type)}">${escapeHtml(i.type)}</span><span class="scene-badge">${escapeHtml(i.scene)}</span></div><button class="favorite-button ${i.favorite?'on':''}" data-action="favorite" aria-label="${i.favorite?'お気に入りを解除':'お気に入りに追加'}" aria-pressed="${i.favorite}">${i.favorite?'★':'☆'}</button></div>
+      <div class="item-body">${escapeHtml(i.body)}</div>
+      ${i.opening?`<div class="item-opening">↳ 話し出し：${escapeHtml(i.opening)}</div>`:''}
+      ${i.tags.length?`<div class="tags">${i.tags.map(t=>`<span class="tag">#${escapeHtml(t)}</span>`).join('')}</div>`:''}
+      <div class="item-bottom"><span class="item-date">${dateLabel(i.createdAt)}${i.usageCount?' · '+i.usageCount+'回話した':''}</span><div class="item-tools"><button data-action="draw">引き出す</button><button data-action="edit">編集</button><button data-action="delete" class="danger">削除</button></div></div>
+    </article>`).join('');
+  }
+  function refresh(){updateStats();renderList();updatePoolCount();}
+  function getPool(){const scene=$('recallScene').value;const type=$('recallType').value;const fav=$('favoritesOnly').checked;
+    return items.filter(i=>(scene==='all'||i.scene==='いつでも'||i.scene===scene)&&(type==='all'||i.type===type)&&(!fav||i.favorite));}
+  function updatePoolCount(){const n=getPool().length;$('poolCount').textContent=`候補：${n}件`;}
+  function draw(preferredId=null) {
+    const pool=getPool();if(!pool.length){$('recallResult').innerHTML='<div class="empty-state"><strong>この条件のネタはまだありません</strong>場面やジャンルを変えるか、ストックを追加してください。</div>';drawnId=null;return;}
+    let picked=pool.find(i=>i.id===preferredId);
+    if(!picked){let eligible=pool.filter(i=>!recentIds.includes(i.id));if(!eligible.length)eligible=pool.filter(i=>i.id!==drawnId);if(!eligible.length)eligible=pool;
+      const weights=eligible.map(i=>1+(i.favorite?1:0)+(i.usageCount===0?1.5:0)+(i.lastUsedAt?0:0.5));
+      let r=Math.random()*weights.reduce((a,b)=>a+b,0);picked=eligible[eligible.length-1];for(let j=0;j<eligible.length;j++){r-=weights[j];if(r<=0){picked=eligible[j];break;}}
+    }
+    drawnId=picked.id;recentIds.push(picked.id);if(recentIds.length>3)recentIds.shift();renderDrawn(picked);
+  }
+  function renderDrawn(i){
+    $('recallResult').innerHTML=`<article class="pulled-card" data-id="${escapeHtml(i.id)}">
+      <div class="pulled-top"><div class="item-meta"><span class="type-badge">${escapeHtml(i.type)}</span><span class="scene-badge">${escapeHtml(i.scene)}</span></div><span class="pulled-index">HIKIDASHI / 01</span></div>
+      <div class="pulled-body">${escapeHtml(i.body)}</div>
+      ${i.opening?`<div class="pulled-opening"><span>話し始めの一言</span>${escapeHtml(i.opening)}</div>`:''}
+      ${i.notes?`<details><summary>背景・オチを見る</summary><div>${escapeHtml(i.notes)}</div></details>`:''}
+      ${i.tags.length?`<div class="tags">${i.tags.map(t=>`<span class="tag">#${escapeHtml(t)}</span>`).join('')}</div>`:''}
+      <p class="reaction-title">実際に話してみたら？</p>
+      <div class="reaction-buttons"><button data-reaction="great">◎ ウケた</button><button data-reaction="normal">○ ふつう</button><button data-reaction="miss">△ いまいち</button></div>
+      <button class="next-button" data-action="next">↗ 別のネタを引く</button>
+      <p class="reaction-hint">反応を記録すると、自動で次のネタへ進みます。</p>
+    </article>`;
+  }
+  function recordReaction(kind){const i=items.find(x=>x.id===drawnId);if(!i)return;i.usageCount++;i.reactions[kind]++;i.lastUsedAt=new Date().toISOString();i.updatedAt=new Date().toISOString();persist();refresh();showToast('反応を記録しました');draw();}
+  function exportData(){
+    const blob=new Blob([JSON.stringify({app:'ひきだし',version:1,exportedAt:new Date().toISOString(),items},null,2)],{type:'application/json;charset=utf-8'});
+    const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`hikidashi-backup-${new Date().toISOString().slice(0,10)}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);showToast('バックアップを書き出しました');
+  }
+  async function importData(file){if(!file)return;
+    try {if(file.size>10*1024*1024)throw new Error('ファイルが大きすぎます');const data=JSON.parse(await file.text());
+      const raw=Array.isArray(data)?data:data?.items;if(!Array.isArray(raw)||raw.length>10000)throw new Error('有効なバックアップではありません');
+      const parsed=raw.map(sanitize);if(parsed.some(x=>!x))throw new Error('形式が正しくありません');
+      if(!window.confirm(`現在の${items.length}件を、読み込んだ${parsed.length}件で置き換えます。よろしいですか？`))return;
+      const unique=new Map(parsed.map(i=>[i.id,i]));items=[...unique.values()];persist();resetForm();refresh();$('backupDialog').close();showToast(`${items.length}件のネタを読み込みました`);
+    }catch(e){showToast(`読み込みに失敗：${e.message}`);}finally{$('importInput').value='';}
+  }
+  // events
+  $('tabStock').addEventListener('click',()=>setTab('stock'));
+  $('tabRecall').addEventListener('click',()=>setTab('recall'));
+  $('typePicker').addEventListener('click',e=>{const b=e.target.closest('[data-type]');if(b)chooseType(b.dataset.type);});
+  $('captureForm').addEventListener('submit',handleSave);
+  $('captureForm').addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key==='Enter'){e.preventDefault();$('captureForm').requestSubmit();}});
+  $('cancelEdit').addEventListener('click',resetForm);
+  $('searchInput').addEventListener('input',renderList);
+  document.querySelector('.filter-strip').addEventListener('click',e=>{const b=e.target.closest('[data-list-type]');if(!b)return;listType=b.dataset.listType;document.querySelectorAll('[data-list-type]').forEach(x=>x.classList.toggle('active',x===b));renderList();});
+  $('itemList').addEventListener('click',e=>{
+    const button=e.target.closest('button[data-action]');if(!button)return;
+    const id=button.closest('[data-id]')?.dataset.id;const item=items.find(x=>x.id===id);if(!item)return;
+    switch(button.dataset.action){
+      case 'favorite':item.favorite=!item.favorite;persist();refresh();break;
+      case 'edit':beginEdit(id);break;
+      case 'delete':if(window.confirm('このネタを削除しますか？')){items=items.filter(x=>x.id!==id);if(editingId===id)resetForm();persist();refresh();showToast('削除しました');}break;
+      case 'draw':$('recallType').value='all';$('recallScene').value='all';$('favoritesOnly').checked=false;setTab('recall');draw(id);$('recallPanel').scrollIntoView({behavior:'smooth'});break;
+    }
+  });
+  ['recallScene','recallType','favoritesOnly'].forEach(id=>$(id).addEventListener('change',()=>{updatePoolCount();drawnId=null;$('recallResult').innerHTML='<div class="blank-recall"><div class="blank-symbol">↗</div><p>条件を変えました。<br>1枚引いてみましょう。</p></div>';}));
+  $('drawButton').addEventListener('click',()=>draw());
+  $('recallResult').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.reaction)recordReaction(b.dataset.reaction);else if(b.dataset.action==='next')draw();});
+  $('backupButton').addEventListener('click',()=>$('backupDialog').showModal());
+  $('closeBackup').addEventListener('click',()=>$('backupDialog').close());
+  $('backupDialog').addEventListener('click',e=>{if(e.target===$('backupDialog'))$('backupDialog').close();});
+  $('exportButton').addEventListener('click',exportData);
+  $('importInput').addEventListener('change',e=>importData(e.target.files?.[0]));
+  load();refresh();
+  if('serviceWorker' in navigator && window.location.protocol.startsWith('http')) navigator.serviceWorker.register('./sw.js').catch(()=>{});
+})();
+
+</script>
+</body>
+</html>
