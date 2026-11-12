@@ -148,12 +148,12 @@
         <div class="filter-strip" role="group" aria-label="ジャンルで絞り込み"><button class="filter active" data-list-type="all">すべて</button><button class="filter" data-list-type="話題">話題</button><button class="filter" data-list-type="小ボケ">小ボケ</button><button class="filter" data-list-type="あるある">あるある</button><button class="filter" data-list-type="その他">その他</button><button class="filter" data-list-type="favorite">★ お気に入り</button></div>
         <div class="list-controls">
           <label>ティア <select id="tierFilter" aria-label="ティアで絞り込む"><option value="all">すべて</option><option value="S">S</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="-">未評価</option></select></label>
-          <label>壁打ち <select id="reviewFilter" aria-label="壁打ちの進捗で絞り込む"><option value="all">すべて</option><option value="unreviewed">未着手</option><option value="in_progress">壁打ち中</option><option value="refined">洗練済み</option><option value="stale">要再確認</option><option value="needs_work">未完了</option></select></label>
+          <label>壁打ち <select id="reviewFilter" aria-label="壁打ちの進捗で絞り込む"><option value="all">すべて</option><option value="unreviewed">未着手</option><option value="in_progress">壁打ち中</option><option value="refined" selected>洗練済み</option><option value="stale">要再確認</option><option value="needs_work">未完了</option></select></label>
           <label>使いどころ <select id="roleFilter" aria-label="使いどころで絞り込む"><option value="all">すべて</option><option value="-">未分類</option><option value="アイスブレイク">アイスブレイク</option><option value="本命ボケ">本命ボケ</option><option value="雑談展開">雑談展開</option><option value="深掘り">深掘り</option><option value="つなぎ">つなぎ</option></select></label>
           <label>並び <select id="sortMode" aria-label="ネタの並び順"><option value="new">新しい順</option><option value="tier">ティア順</option></select></label>
           <div class="view-switch" aria-label="一覧表示切り替え"><button type="button" class="on" id="gridMode" aria-pressed="true">タイル</button><button type="button" id="rowMode" aria-pressed="false">行</button></div>
         </div>
-        <p class="list-hint">題名タップで詳細 · ＃で使いどころを設定 · ティアはその場で変更</p>
+        <p class="list-hint">最初は洗練済みのみ表示 · 全ストックは「壁打ち」→「すべて」 · 題名タップで詳細</p>
         <div id="itemList" class="item-list compact-grid" aria-live="polite"></div>
       </div>
     </section>
@@ -172,7 +172,7 @@
     </section>
   </main>
 
-  <footer class="site-footer"><span>ひきだし · v1.8.1</span><span>記録はこの端末のブラウザに保存されます</span></footer>
+  <footer class="site-footer"><span>ひきだし · v1.8.2</span><span>記録はこの端末のブラウザに保存されます</span></footer>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <dialog id="listRoleDialog" class="list-role-dialog" aria-labelledby="listRoleTitle">
@@ -223,7 +223,7 @@
   let currentType = '話題';
   let listType = 'all';
   let tierFilter = 'all';
-  let reviewFilter = 'all';
+  let reviewFilter = 'refined';
   let roleFilter = 'all';
   let selectedRoles = [];
   let listRoleId = null;
@@ -426,7 +426,7 @@
       createdAt:old?.createdAt||now,updatedAt:now,lastUsedAt:old?.lastUsedAt||null};
     if(!old || old.body!==data.body || old.notes!==data.notes || old.opening!==data.opening) data.contentUpdatedAt=now;
     if(old)items=items.map(i=>i.id===old.id?data:i);else items.unshift(data);
-    persist(old?'編集':'追加');resetForm();refresh();showToast(old?'ネタを更新しました':'ネタをストックしました');
+    persist(old?'編集':'追加');resetForm();refresh();showToast(old?'ネタを更新しました':'ネタを保存しました。未着手のネタは「壁打ち→すべて」で確認できます');
   }
   function beginEdit(id) {
     const i=items.find(x=>x.id===id);if(!i)return;setTab('stock');editingId=id;
@@ -512,7 +512,7 @@
     const list=$('itemList');
     list.className='item-list '+(viewMode==='grid'?'compact-grid':'compact-row');
     if(!shown.length){
-      list.innerHTML=`<div class="empty-state"><strong>${items.length?'条件に合うネタがありません':'まだネタがありません'}</strong><span>${items.length?'検索条件を変更してください。':'「＋ 追加」から登録できます。'}</span></div>`;
+      list.innerHTML=`<div class="empty-state"><strong>${items.length?(reviewFilter==='refined'?'洗練済みのネタはまだありません':'条件に合うネタがありません'):'まだネタがありません'}</strong><span>${items.length?(reviewFilter==='refined'?'「壁打ち」を「すべて」に切り替えると、未着手のストックも見られます。':'検索条件を変更してください。'):'「＋ 追加」から登録できます。'}</span></div>`;
       return;
     }
     list.innerHTML=shown.map(i=>`<article class="item-card compact-tile" data-id="${escapeHtml(i.id)}">
