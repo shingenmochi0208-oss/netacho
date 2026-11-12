@@ -138,14 +138,19 @@
       var local = normalize(bridge.getState());
       var combined = merge(remote.state, local);
       if (serial(combined) === serial(remote.state)) {
-        bridge.applyCloudState(combined);
-        status('同期済み · ' + combined.items.length + '件', 'ok');
+        var latestLocal = normalize(bridge.getState());
+        var safeMerged = merge(combined, latestLocal);
+        bridge.applyCloudState(safeMerged);
+        if(serial(safeMerged)!==serial(combined))rerun=true;
+        status(rerun?'新しい変更を追加同期中…':'同期済み · ' + safeMerged.items.length + '件', rerun?'info':'ok');
         return;
       }
       try {
         await saveRemote(combined, remote.sha);
-        bridge.applyCloudState(combined);
-        status('同期済み · ' + combined.items.length + '件', 'ok');
+        var latestAfterUpload = merge(combined, normalize(bridge.getState()));
+        bridge.applyCloudState(latestAfterUpload);
+        if(serial(latestAfterUpload)!==serial(combined))rerun=true;
+        status(rerun?'新しい変更を追加同期中…':'同期済み · ' + latestAfterUpload.items.length + '件', rerun?'info':'ok');
         return;
       } catch (error) {
         if (error.code !== 'conflict' || attempt === 2) throw error;
