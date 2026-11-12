@@ -54,6 +54,7 @@
 .compact-row .compact-bottom{justify-content:flex-end;gap:5px}.compact-row .tier-picker{width:58px!important;padding:4px 5px!important}
 @media(max-width:390px){.review-chip{font-size:9px;padding:3px 4px}.tier-picker{width:67px!important;font-size:11px!important;padding-left:5px!important}.compact-row .compact-tile{grid-template-columns:43px minmax(0,1fr) 118px}.compact-row .tier-picker{width:53px!important}.review-progress span{font-size:9px}}
 
+.cloud-version{font-size:11px!important;color:#68777e!important;margin:5px 0 12px!important}
 </style>
   <title>ひきだし | ネタ帳</title>
 </head>
@@ -133,7 +134,7 @@
     </section>
   </main>
 
-  <footer class="site-footer"><span>ひきだし · v1.7</span><span>記録はこの端末のブラウザに保存されます</span></footer>
+  <footer class="site-footer"><span>ひきだし · v1.7.2</span><span>記録はこの端末のブラウザに保存されます</span></footer>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <dialog id="noteDialog" class="note-dialog" aria-labelledby="noteDialogTitle">
@@ -149,6 +150,7 @@
 <input id="cloudSyncToken" type="password" autocomplete="off" spellcheck="false" placeholder="github_pat_…" aria-describedby="cloudSyncStatus">
 <label class="toggle-line" style="margin:10px 0 3px;align-items:flex-start"><input type="checkbox" id="cloudRemember" aria-describedby="cloudRememberStatus"><span>この端末でログイン状態を保持する<small style="display:block;color:#737d85;font-weight:400">端末内で暗号化して保存・次回起動時に自動接続。共有端末ではオフにしてください。</small></span></label><p id="cloudRememberStatus" role="status">初回接続時にチェックすると保存できます。</p><div class="cloud-buttons"><button type="button" id="cloudConnect">接続して同期</button><button type="button" id="cloudSyncNow" disabled>今すぐ同期</button><button type="button" id="cloudDisconnect">切断</button></div>
 <p id="cloudSyncStatus" role="status">未接続。ネタは引き続き端末内へ保存されます。</p>
+<p id="cloudVersion" class="cloud-version" aria-live="polite">同期プログラムを読み込み中…</p>
 <p>「切断」で保存済みの接続情報を消去できます。この暗号化は端末内の保存対策であり、不正なコードや端末の乗っ取りへの防御にはなりません。複数端末での同時編集は更新日時が新しい内容を優先します。大切なメモはJSONでも控えを残してください。</p>
 </div>
 <div class="modal-actions"><button type="button" id="exportButton" class="btn-primary">↓ JSONを書き出す</button><label class="file-upload">↑ JSONを読み込む<input id="importInput" type="file" accept="application/json,.json" hidden></label></div><p class="warning-text">読み込むと、現在のネタ帳をファイルの内容で置き換えます。必要なら先に書き出してください。</p></dialog>
@@ -581,6 +583,6 @@
 })();
 
 </script>
-<script src="./sync.js" defer></script>
+<script src="./sync.js?v=1.7.2" defer></script>
 </body>
 </html>
