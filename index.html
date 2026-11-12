@@ -55,6 +55,14 @@
 @media(max-width:390px){.review-chip{font-size:9px;padding:3px 4px}.tier-picker{width:67px!important;font-size:11px!important;padding-left:5px!important}.compact-row .compact-tile{grid-template-columns:43px minmax(0,1fr) 118px}.compact-row .tier-picker{width:53px!important}.review-progress span{font-size:9px}}
 
 .cloud-version{font-size:11px!important;color:#68777e!important;margin:5px 0 12px!important}
+
+/* v1.8: optional multi-label conversation use-case tags */
+.role-picker{display:flex;flex-wrap:wrap;gap:8px}
+.role-option{background:#f5f6f4;border:1px solid #d9ddd8;border-radius:10px;padding:9px 12px;font-size:13px;font-weight:700;color:#4c5e68;min-height:41px}
+.role-option.selected{background:#e1edf3;color:#194a63;border-color:#6a9bb5}
+.role-tags{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
+.role-chip{font-size:11px;font-weight:750;background:#edf2f4;color:#3b6476;border:1px solid #dde6ea;padding:4px 8px;border-radius:7px}
+
 </style>
   <title>ひきだし | ネタ帳</title>
 </head>
@@ -94,8 +102,17 @@
           <div class="label-gap"><label class="field-label">ジャンル</label><div class="choice-row" id="typePicker" role="group" aria-label="ジャンル">
             <button type="button" class="choice active" data-type="話題">話題</button><button type="button" class="choice" data-type="小ボケ">小ボケ</button><button type="button" class="choice" data-type="あるある">あるある</button><button type="button" class="choice" data-type="その他">その他</button>
           </div></div>
-          <details class="advanced-fields" id="advancedFields"><summary>話し出し・タグなどを追加 <span>＋</span></summary>
+          <details class="advanced-fields" id="advancedFields"><summary>使いどころ・話し出し・タグを追加 <span>＋</span></summary>
             <div class="advanced-inner">
+              <label class="field-label">使いどころ <span class="optional">任意・最大3つ</span></label>
+              <div class="role-picker" id="rolePicker" role="group" aria-label="ネタの使いどころ">
+                <button type="button" class="role-option" data-role="アイスブレイク" aria-pressed="false">アイスブレイク</button>
+                <button type="button" class="role-option" data-role="本命ボケ" aria-pressed="false">本命ボケ</button>
+                <button type="button" class="role-option" data-role="雑談展開" aria-pressed="false">雑談展開</button>
+                <button type="button" class="role-option" data-role="深掘り" aria-pressed="false">深掘り</button>
+                <button type="button" class="role-option" data-role="つなぎ" aria-pressed="false">つなぎ</button>
+              </div>
+              <div class="field-caption">会話での役割を分類。ジャンル・ティア・壁打ち状況とは別に管理します。</div>
               <label class="field-label" for="openingInput">話し始めの一言 <span class="optional">任意</span></label><input id="openingInput" maxlength="300" placeholder="例：これ、前から思ってたんだけど……">
               <label class="field-label" for="sceneInput">使えそうな場面</label><select id="sceneInput"><option value="いつでも">いつでも</option><option value="初対面">初対面</option><option value="友人">友人</option><option value="飲み会">飲み会</option><option value="深い話">深い話</option></select>
               <label class="field-label" for="tagsInput">タグ <span class="optional">カンマ区切り</span></label><input id="tagsInput" maxlength="400" placeholder="例：社会、仕事、ツッコミ">
@@ -112,6 +129,7 @@
         <div class="list-controls">
           <label>ティア <select id="tierFilter" aria-label="ティアで絞り込む"><option value="all">すべて</option><option value="S">S</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="-">未評価</option></select></label>
           <label>壁打ち <select id="reviewFilter" aria-label="壁打ちの進捗で絞り込む"><option value="all">すべて</option><option value="unreviewed">未着手</option><option value="in_progress">壁打ち中</option><option value="refined">洗練済み</option><option value="stale">要再確認</option><option value="needs_work">未完了</option></select></label>
+          <label>使いどころ <select id="roleFilter" aria-label="使いどころで絞り込む"><option value="all">すべて</option><option value="-">未分類</option><option value="アイスブレイク">アイスブレイク</option><option value="本命ボケ">本命ボケ</option><option value="雑談展開">雑談展開</option><option value="深掘り">深掘り</option><option value="つなぎ">つなぎ</option></select></label>
           <label>並び <select id="sortMode" aria-label="ネタの並び順"><option value="new">新しい順</option><option value="tier">ティア順</option></select></label>
           <div class="view-switch" aria-label="一覧表示切り替え"><button type="button" class="on" id="gridMode" aria-pressed="true">タイル</button><button type="button" id="rowMode" aria-pressed="false">行</button></div>
         </div>
@@ -134,7 +152,7 @@
     </section>
   </main>
 
-  <footer class="site-footer"><span>ひきだし · v1.7.2</span><span>記録はこの端末のブラウザに保存されます</span></footer>
+  <footer class="site-footer"><span>ひきだし · v1.8</span><span>記録はこの端末のブラウザに保存されます</span></footer>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <dialog id="noteDialog" class="note-dialog" aria-labelledby="noteDialogTitle">
@@ -166,6 +184,7 @@
   const TYPES = ['話題','小ボケ','あるある','その他'];
   const SCENES = ['いつでも','初対面','友人','飲み会','深い話'];
   const TIERS = ['S','A','B','C'];
+  const ROLES = ["アイスブレイク","本命ボケ","雑談展開","深掘り","つなぎ"];
   const REVIEW_STATES = ['unreviewed','in_progress','refined'];
   const REVIEW_LABELS = {unreviewed:'未着手',in_progress:'壁打ち中',refined:'洗練済み',stale:'要再確認'};
   const $ = (id) => document.getElementById(id);
@@ -178,6 +197,8 @@
   let listType = 'all';
   let tierFilter = 'all';
   let reviewFilter = 'all';
+  let roleFilter = 'all';
+  let selectedRoles = [];
   let listSort = 'new';
   let viewMode = 'grid';
   let detailId = null;
@@ -221,6 +242,7 @@
     return {
       id:trimMax(raw.id || makeId(),120), body, type:TYPES.includes(raw.type)?raw.type:'話題',
       scene:SCENES.includes(raw.scene)?raw.scene:'いつでも',tier:TIERS.includes(raw.tier)?raw.tier:'',
+      roles:Array.isArray(raw.roles)?[...new Set(raw.roles.filter(x=>typeof x==='string'&&ROLES.includes(x)))].slice(0,3):[],
       review:sanitizeReview(raw.review),
       contentUpdatedAt:Number.isFinite(Date.parse(raw.contentUpdatedAt))?raw.contentUpdatedAt:(Number.isFinite(Date.parse(raw.updatedAt))?raw.updatedAt:new Date().toISOString()),
       opening:trimMax(raw.opening,300),notes:trimMax(raw.notes,3000),
@@ -346,8 +368,22 @@
     if (!stock) updatePoolCount();
   }
   function chooseType(type){ currentType=type; document.querySelectorAll('#typePicker [data-type]').forEach(b=>b.classList.toggle('active',b.dataset.type===type)); }
+  function syncRolePicker(){
+    document.querySelectorAll('#rolePicker [data-role]').forEach(b=>{
+      const active=selectedRoles.includes(b.dataset.role);
+      b.classList.toggle('selected',active);
+      b.setAttribute('aria-pressed',String(active));
+    });
+  }
+  function toggleRole(value){
+    if(!ROLES.includes(value))return;
+    if(selectedRoles.includes(value))selectedRoles=selectedRoles.filter(x=>x!==value);
+    else if(selectedRoles.length<3)selectedRoles.push(value);
+    else {showToast('使いどころタグは最大3つです');return;}
+    syncRolePicker();
+  }
   function resetForm(){
-    $('captureForm').reset();chooseType('話題');editingId=null;
+    $('captureForm').reset();chooseType('話題');selectedRoles=[];syncRolePicker();editingId=null;
     $('formTitle').textContent='ネタを放り込む';$('saveButton').textContent='＋ ストックする';$('cancelEdit').classList.add('hidden');$('advancedFields').open=false;
     if($('captureCard').open)$('captureCard').close();
   }
@@ -357,7 +393,7 @@
     const data={...old,id:old?.id||makeId(),body,type:currentType,scene:$('sceneInput').value,
       opening:trimMax($('openingInput').value,300),notes:trimMax($('notesInput').value,3000),
       tags:[...new Set($('tagsInput').value.split(/[,、，\n]+/g).map(x=>trimMax(x,30)).filter(Boolean))].slice(0,15),
-      tier:old?.tier||'',review:old?.review||sanitizeReview(null),contentUpdatedAt:old?.contentUpdatedAt||now,
+      tier:old?.tier||'',roles:selectedRoles.slice(),review:old?.review||sanitizeReview(null),contentUpdatedAt:old?.contentUpdatedAt||now,
       favorite:old?.favorite||false,usageCount:old?.usageCount||0,reactions:old?.reactions||{great:0,normal:0,miss:0},
       createdAt:old?.createdAt||now,updatedAt:now,lastUsedAt:old?.lastUsedAt||null};
     if(!old || old.body!==data.body || old.notes!==data.notes || old.opening!==data.opening) data.contentUpdatedAt=now;
@@ -368,7 +404,8 @@
     const i=items.find(x=>x.id===id);if(!i)return;setTab('stock');editingId=id;
     $('bodyInput').value=i.body;$('openingInput').value=i.opening;$('sceneInput').value=i.scene;
     $('tagsInput').value=i.tags.join('、');$('notesInput').value=i.notes;chooseType(i.type);
-    $('advancedFields').open=!!(i.opening||i.tags.length||i.scene!=='いつでも');
+    selectedRoles=[...(i.roles||[])];syncRolePicker();
+    $('advancedFields').open=!!(i.opening||i.tags.length||(i.roles||[]).length||i.scene!=='いつでも');
     $('formTitle').textContent='ネタを編集する';$('saveButton').textContent='変更を保存';$('cancelEdit').classList.remove('hidden');
     if($('noteDialog').open)$('noteDialog').close();$('captureCard').showModal();setTimeout(()=>$('bodyInput').focus({preventScroll:true}),100);
   }
@@ -410,7 +447,8 @@
     let shown=items.filter(i=>(listType==='all'||(listType==='favorite'?i.favorite:i.type===listType))&&
       (tierFilter==='all'||(tierFilter==='-'?!i.tier:i.tier===tierFilter))&&
       (reviewFilter==='all'||(reviewFilter==='needs_work'?reviewStage(i)!=='refined':reviewStage(i)===reviewFilter))&&
-      (!q||[i.body,i.opening,i.notes,i.scene,...i.tags].join(' ').toLocaleLowerCase('ja-JP').includes(q)));
+      (roleFilter==='all'||(roleFilter==='-'?!(i.roles||[]).length:(i.roles||[]).includes(roleFilter)))&&
+      (!q||[i.body,i.opening,i.notes,i.scene,...i.tags,...(i.roles||[])].join(' ').toLocaleLowerCase('ja-JP').includes(q)));
     const rank=(i)=>i.tier?TIERS.indexOf(i.tier):99;
     shown.sort((a,b)=>listSort==='tier'?(rank(a)-rank(b)||Date.parse(b.createdAt)-Date.parse(a.createdAt)):Date.parse(b.createdAt)-Date.parse(a.createdAt));
     $('listCount').textContent=shown.length;
@@ -437,6 +475,7 @@
       <button type="button" class="detail-favorite" data-detail-action="favorite">${i.favorite?'★ お気に入り解除':'☆ お気に入りに追加'}</button></div>
       <div class="detail-tier"><label for="detailTier">ティア</label><select id="detailTier" aria-label="このネタのティア">${tierOptions(i.tier)}</select></div>
       <div class="detail-tier" style="margin-top:11px"><label for="detailReview">AI壁打ち</label><select id="detailReview" aria-label="壁打ちの進捗" style="width:160px">${reviewOptions(reviewStage(i))}</select></div>
+      ${i.roles?.length?`<div class="role-tags" aria-label="使いどころ">${i.roles.map(t=>`<span class="role-chip">${escapeHtml(t)}</span>`).join('')}</div>`:''}
       ${i.review?.source==='chatgpt'&&i.review?.reviewedAt?`<div class="detail-label">ChatGPTで洗練 · ${dateLabel(i.review.reviewedAt)}</div>`:''}
       ${i.review?.summary?`<div class="detail-section"><div class="detail-label">壁打ちの成果</div><div class="detail-content">${escapeHtml(i.review.summary)}</div></div>`:''}
       ${reviewStage(i)==='stale'?'<p class="review-stale-hint">洗練後に題名や中身が編集されました。再度壁打ちしたら「洗練済み」に更新してください。</p>':''}
@@ -495,6 +534,7 @@
   $('captureCard').addEventListener('close',()=>{if(editingId!==null)resetForm();});
   $('tierFilter').addEventListener('change',e=>{tierFilter=e.target.value;renderList();});
   $('reviewFilter').addEventListener('change',e=>{reviewFilter=e.target.value;renderList();});
+  $('roleFilter').addEventListener('change',e=>{roleFilter=e.target.value;renderList();});
   $('sortMode').addEventListener('change',e=>{listSort=e.target.value;renderList();});
   function setListView(mode){viewMode=mode;['grid','row'].forEach(m=>{const el=$(m+'Mode');const active=m===mode;el.classList.toggle('on',active);el.setAttribute('aria-pressed',String(active));});renderList();}
   $('gridMode').addEventListener('click',()=>setListView('grid'));
@@ -515,6 +555,7 @@
   });
   $('tabRecall').addEventListener('click',()=>setTab('recall'));
   $('typePicker').addEventListener('click',e=>{const b=e.target.closest('[data-type]');if(b)chooseType(b.dataset.type);});
+  $('rolePicker').addEventListener('click',e=>{const b=e.target.closest('[data-role]');if(b)toggleRole(b.dataset.role);});
   $('captureForm').addEventListener('submit',handleSave);
   $('captureForm').addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key==='Enter'){e.preventDefault();$('captureForm').requestSubmit();}});
   $('cancelEdit').addEventListener('click',resetForm);
