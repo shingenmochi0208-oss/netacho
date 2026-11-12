@@ -24,6 +24,19 @@ https://shingenmochi0208-oss.github.io/netacho/
 
 入力欄に表示していた個人的な例文を削除し、中立的な案内文に変更しました。
 
+## GitHubクラウド同期（v1.2・試用版）
+アプリ本体は公開リポジトリ `netacho` に置いたまま、個人的なネタは**別の非公開リポジトリ** `shingenmochi0208-oss/netacho-data` の `data.json` に保存できます。
+
+接続方法：
+1. GitHubで `netacho-data` を**Private**として新規作成する（アプリの公開 `netacho` とは別）
+2. GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens で、Repository access を `Only select repositories → netacho-data`、Repository permissions → Contents を `Read and write` にした期限付きトークンを作成
+3. iPhoneでホーム画面のひきだしを開き、右上のバックアップ画面で「GitHubクラウド同期（試用版）」にトークンを入力して接続する
+4. ほかの端末でも同じURLにアクセスし、各端末で別個のトークンを作成して接続すれば、GitHub上のネタを取得できる
+
+トークンを**チャット・GitHubのコード・README・画面キャプチャ等に絶対に貼り付けない**こと。トークンはメモリ内にのみ保持するため、アプリを再起動すると再入力が必要です。パスワードマネージャー等で安全に管理してください。GitHub Pagesは認証サーバーではありません。長期間の自動ログインが必要な場合は、GitHub Appと認証バックエンドを別途導入する必要があります。
+
+接続中の変更は約2秒後にGitHubへ反映を試み、画面復帰時にも同期します。オフラインでは端末内に保存し、再接続後に同期します。競合時はIDと更新日時をもとにマージするため、同じネタを2台から同時編集すると更新日時の新しい方が優先されます。削除情報も同期します。**アプリを終了する前に「同期済み」を確認**してください。未接続時にバックグラウンド同期することはありません。万一に備えJSONバックアップも保持してください。
+
 ## 機能
 - 1文からすぐ保存（話題／小ボケ／あるある／その他）
 - タグ、場面、話し出し、補足、検索、お気に入り、編集と削除
